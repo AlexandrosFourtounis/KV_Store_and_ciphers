@@ -30,8 +30,8 @@ int main()
     char *key = "randombyte"; // Allocate memory for the key
                               // Generate a random key of length 9
 
-    char *plaintext = "ThisIsACat";
-
+    char *plaintext = "affine CIPHER";
+    /*
     char *ciphertext = one_time_pad_encr(plaintext, 10, key);
     char *decrypted = one_time_pad_decr(ciphertext, 10, key);
     printf("Plaintext: %s\n", plaintext);
@@ -40,6 +40,11 @@ int main()
         printf("Ciphertext[%d]: 0x%02x\n", i, ciphertext[i]);
     }
     printf("Decrypted: %s\n", decrypted);
+    */
 
+    char *affine_ciphertext = affine_encr(plaintext);
+    char *affine_decrypted = affine_decr(affine_ciphertext);
+    printf("Affine Ciphertext: %s\n", affine_ciphertext);
+   printf("Affine Decrypted: %s\n", affine_decrypted);
     return 0;
 }
