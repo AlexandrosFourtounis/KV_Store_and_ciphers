@@ -36,3 +36,18 @@ Decrypts the given ciphertext using the Affine cipher
 
 */
 char *affine_decr(const char *ciphertext);
+
+/*
+Encrypts the given plaintext using the Trithemian cipher
+    @param
+        - plaintext: a pointer to the plaintext string.
+    @return a pointer to the encrypted ciphertext.
+*/
+char *trithemius_encr(const char *plaintext);
+
+/*Decrypts the given ciphertext using the Trithemian cipher
+    @param
+        - ciphertext : a pointer to the ciphertext string.
+    @ return a pointer to the encrypted plaintext.*
+*/
+char *trithemius_decr(const char *ciphertext);

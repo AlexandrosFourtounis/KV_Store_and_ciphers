@@ -6,10 +6,12 @@
 
 
 char letters[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+char tabula_recta[26][26]
+
 
 char *one_time_pad_encr(const char *plaintext, int n, void *key)
 {
-    char *ciphertext = (char *)malloc(n);
+    char *ciphertext = (char *)malloc(n+1);
     int i = 0;
     while (i < n)
     {
@@ -23,12 +25,13 @@ char *one_time_pad_encr(const char *plaintext, int n, void *key)
         }
         i++;
     }
+    ciphertext[i] = '\0';
     return ciphertext;
 }
 
 char *one_time_pad_decr(const char *ciphertext, int n, void *key)
 {
-    char *plaintext = (char *)malloc(n);
+    char *plaintext = (char *)malloc(n+1);
     int i = 0;
     while (i < n)
     {
@@ -42,6 +45,7 @@ char *one_time_pad_decr(const char *ciphertext, int n, void *key)
         }
         i++;
     }
+    plaintext[i] = '\0';
     return plaintext;
 }
 
@@ -76,7 +80,7 @@ char get_char_from_pos(int i)
 char *affine_encr(const char *plaintext)
 {
     int len = strlen(plaintext);
-    char *ciphertext = malloc(len + 1); // Allocate memory for ciphertext
+    char *ciphertext = malloc(len + 1); 
     if (!ciphertext)
     {
         return NULL; 
@@ -100,14 +104,14 @@ char *affine_encr(const char *plaintext)
         }
         i++;
     }
-    ciphertext[i] = '\0'; // Null-terminate the ciphertext string
+    ciphertext[i] = '\0'; 
     return ciphertext;
 }
 
 char *affine_decr(const char *ciphertext)
 {
     int len = strlen(ciphertext);
-    char *plaintext = malloc(len + 1); // Allocate memory for plaintext
+    char *plaintext = malloc(len + 1);
     if (!plaintext)
     {
         return NULL; 
@@ -133,4 +137,12 @@ char *affine_decr(const char *ciphertext)
     }
     plaintext[i] = '\0'; 
     return plaintext;
-}   
+}
+
+char *trithemius_encr(const char *plaintext){
+
+}
+
+char *trithemius_decr(const char *ciphertext)
+{
+}
