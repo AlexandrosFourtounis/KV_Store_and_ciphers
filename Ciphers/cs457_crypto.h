@@ -51,3 +51,6 @@ char *trithemius_encr(const char *plaintext);
     @ return a pointer to the encrypted plaintext.*
 */
 char *trithemius_decr(const char *ciphertext);
+
+char *rail_fence_decr(const char *ciphertext, int key);
+char *rail_fence_encr(const char *plaintext, int key);

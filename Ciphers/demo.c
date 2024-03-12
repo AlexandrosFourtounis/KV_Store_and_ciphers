@@ -30,7 +30,8 @@ int main()
     char *key = "randombyte"; // Allocate memory for the key
                               // Generate a random key of length 9
 
-    char *plaintext = "affine CIPHER";
+    char *plaintext = "hello hello hello";
+    char *temp = "WEERA";
     /*
     char *ciphertext = one_time_pad_encr(plaintext, 10, key);
     char *decrypted = one_time_pad_decr(ciphertext, 10, key);
@@ -45,6 +46,13 @@ int main()
     char *affine_ciphertext = affine_encr(plaintext);
     char *affine_decrypted = affine_decr(affine_ciphertext);
     printf("Affine Ciphertext: %s\n", affine_ciphertext);
-   printf("Affine Decrypted: %s\n", affine_decrypted);
-    return 0;
+    printf("Affine Decrypted: %s\n", affine_decrypted);
+    char *rail_ciphertext = rail_fence_encr(temp, 3);
+    char *rail_decrypted = rail_fence_decr(rail_ciphertext, 3);
+    printf("Rail Ciphertext: %s\n", rail_ciphertext);
+    printf("Rail Decrypted: %s\n", rail_decrypted);
+    char *trithemius_ciphertext = trithemius_encr(plaintext);
+    //char *trithemius_decrypted = trithemius_decr(trithemius_ciphertext);
+    printf("Trithemius Ciphertext: %s\n", trithemius_ciphertext);
+    //printf("Trithemius Decrypted: %s\n", trithemius_decrypted);
 }
