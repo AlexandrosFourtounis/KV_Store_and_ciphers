@@ -29,7 +29,7 @@ int main()
 {
     char *key = "randombyte";
 
-    char *plaintext = "H@ E L#L * O";
+    char *plaintext = "Iamhurtverybadlyhelp?";
     char *temp = "WEERA";
     /*
     char *ciphertext = one_time_pad_encr(plaintext, 10, key);
@@ -50,9 +50,15 @@ int main()
     char *rail_decrypted = rail_fence_decr(rail_ciphertext, 3);
     printf("Rail Ciphertext: %s\n", rail_ciphertext);
     printf("Rail Decrypted: %s\n", rail_decrypted);
-    */
+   
     char *trithemius_ciphertext = trithemius_encr(plaintext);
      char *trithemius_decrypted = trithemius_decr(trithemius_ciphertext);
     printf("Trithemius Ciphertext: %s\n", trithemius_ciphertext);
+
     printf("Trithemius Decrypted: %s\n", trithemius_decrypted);
+    */
+    char *scytale_ciphertext = scytale_encr(plaintext,5);
+    printf("Scytale Ciphertext: %s\n", scytale_ciphertext);
+    char *scytale_decrypted = scytale_decr(scytale_ciphertext,5);
+    printf("Scytale Decrypted: %s\n", scytale_decrypted);
 }

@@ -219,7 +219,7 @@ char *trithemius_decr(const char *ciphertext)
     {
         if ((ciphertext[j] >= 'A' && ciphertext[j] <= 'Z') || (ciphertext[j] >= 'a' && ciphertext[j] <= 'z'))
         {
-            i=0;
+            i = 0;
             while (tabula_recta[last % 26][i] != '\0')
             {
                 if (tabula_recta[last % 26][i] == ciphertext[j])
@@ -230,7 +230,7 @@ char *trithemius_decr(const char *ciphertext)
             }
 
             i -= last % 26;
-            if(i<0)
+            if (i < 0)
                 i = i + 26;
             printf("\n\n DEBUG:letter j=%d SHIFT IS %d  column is %d  new column is  %d\n\n", j, last, i + last, i);
             plaintext[j] = (ciphertext[j] >= 'A' && ciphertext[j] <= 'Z') ? tabula_recta[last % 26][i] : tolower(tabula_recta[last % 26][i]);
@@ -275,27 +275,118 @@ char *rail_fence_encr(const char *plaintext, int key)
     return ciphertext;
 }
 
-char *rail_fence_decr(const char *ciphertext, int key)
+char *rail_fence_decr(const char *ciphertext)
 {
+}
+
+char *scytale_encr(const char *plaintext, int diameter)
+{
+    int len = strlen(plaintext);
+    char *ciphertext = malloc(len + 1);
+    char scytale[diameter][len / diameter + 1];
+
+    if (!ciphertext)
+    {
+        return NULL;
+    }
+    int i = 0;
+    int j = 0;
+    while (plaintext[i] != '\0')
+    {
+        scytale[i % diameter][i / diameter] = plaintext[i];
+        i++;
+    }
+
+    i = 0;
+    int rows = len / diameter;
+    while (i < diameter)
+    {
+        j = 0;
+        while (j < rows)
+        {
+            ciphertext[i * rows + j] = scytale[i][j];
+            j++;
+        }
+        i++;
+    }
+    ciphertext[len] = '\0';
+    return ciphertext;
+}
+
+char *scytale_decr(const char *ciphertext, int diameter)
+{
+
     int len = strlen(ciphertext);
     char *plaintext = malloc(len + 1);
     if (!plaintext)
     {
         return NULL;
     }
-
     int i = 0;
     int j = 0;
-    while (i < key)
+    int k = 0;
+    printf("DEBUG: len is %d\n", len);
+    int rows = (len + diameter - 1) / diameter;
+    char scytale[rows][diameter];
+
+    for (int i = 0; i < diameter; i++)
     {
-        j = i;
-        while (j < len)
+        for (int j = 0; j < rows; j++)
         {
-            plaintext[i] = ciphertext[j];
-            j += key;
+            if (i * rows + j < len)
+            {
+                scytale[j][i] = ciphertext[i * rows + j];
+            }
         }
+    }
+
+    i = 0;
+    while (i < diameter)
+    {
+        printf("DEBUG: scytale[%d] = %c\n", i, scytale[i][0]);
         i++;
+    }
+
+    int z = 0;
+    for (int i = 0; i < rows; i++)
+    {
+        for (int j = 0; j < diameter; j++)
+        {
+            if (i * diameter + j < len)
+            {
+                plaintext[k++] = scytale[i][j];
+            }
+        }
     }
     plaintext[len] = '\0';
     return plaintext;
+}
+
+char *omit_punctuation(char *text)
+{
+    int i = 0;
+    int len = strlen(text);
+    char *punctuation = malloc(len + 1);
+    char *final = malloc(len + 1);
+    int j = 0;
+    while (text[i] != '\0')
+    {
+        if (isalpha(text[i]))
+        {
+            punctuation[i] = 'a';
+            final[j] = text[i];
+            j++;
+        }
+        else
+        {
+            punctuation[i] = text[i];
+        }
+        i++;
+    }
+    punctuation[i] = '\0';
+    final[j] = '\0';
+}
+
+char *substitution_decr(const char *ciphertext){
+    
 }

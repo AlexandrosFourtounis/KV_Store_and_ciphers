@@ -58,12 +58,35 @@ char *trithemius_decr(const char *ciphertext);
         - key : the number of rails.
     @ return a pointer to the encrypted plaintext.*
 */
-char *rail_fence_decr(const char *ciphertext, int key);
+char *rail_fence_decr(const char *ciphertext);
 
 /*Encrypts the given plaintext using the Rail-Fence cipher
     @param
-        - ciphertext : a pointer to the ciphertext string.
+        - plaintext : a pointer to the plaintext string.
     @ return a pointer to the encrypted ciphertext.*
 */
-char *rail_fence_encr(const char *plaintext);
+char *rail_fence_encr(const char *plaintext,int key);
 
+/*Encrypts the given plaintext using the Scytale cipher
+    @param
+        - plaintext : a pointer to the plaintext string.
+        - diameter : the diameter of the scytale / number of columns.
+    @ return a pointer to the encrypted ciphertext.*
+*/
+char *scytale_encr(const char *plaintext, int diameter);
+
+/*Decrypts the given ciphertext using the Scytale cipher
+    @param
+        - ciphertext : a pointer to the ciphertext string.
+        - diameter : the diameter of the scytale / number of columns.
+    @ return a pointer to the decrypted plaintext.*
+*/
+char *scytale_decr(const char *ciphertext, int diameter);
+
+/*Decrypts the given ciphertext using a simple substitution algorithm, as well as common word pattern matching.
+    @param
+        -ciphertext : a pointer to the ciphertext string.
+    @return a pointer to the decrypted plaintext.
+
+*/
+char *substitution_decr(const char *ciphertext);
