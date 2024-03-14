@@ -52,5 +52,18 @@ char *trithemius_encr(const char *plaintext);
 */
 char *trithemius_decr(const char *ciphertext);
 
+/*Decrypts the given ciphertext using the Rail-Fence cipher
+    @param
+        - ciphertext : a pointer to the ciphertext string.
+        - key : the number of rails.
+    @ return a pointer to the encrypted plaintext.*
+*/
 char *rail_fence_decr(const char *ciphertext, int key);
-char *rail_fence_encr(const char *plaintext, int key);
+
+/*Encrypts the given plaintext using the Rail-Fence cipher
+    @param
+        - ciphertext : a pointer to the ciphertext string.
+    @ return a pointer to the encrypted ciphertext.*
+*/
+char *rail_fence_encr(const char *plaintext);
+

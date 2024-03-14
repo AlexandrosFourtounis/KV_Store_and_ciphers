@@ -81,7 +81,7 @@ int get_pos(char c)
     {
         if (letters[i] == c)
         {
-            printf("DEBUG: char %c has pos %d\n", c, i);
+            // printf("DEBUG: char %c has pos %d\n", c, i);
             return i;
         }
         i++;
@@ -168,7 +168,8 @@ char *affine_decr(const char *ciphertext)
 
 char *trithemius_encr(const char *plaintext)
 {
-    int i, last, j = 0;
+    int i, last = 0;
+    int j = 0;
     int len = strlen(plaintext);
     char *ciphertext = malloc(len + 1);
     if (!ciphertext)
@@ -177,39 +178,27 @@ char *trithemius_encr(const char *plaintext)
     }
     while (plaintext[j] != '\0')
     {
-        if(j == len){
-            j = 0;
-        }
         if (plaintext[j] >= 'A' && plaintext[j] <= 'Z')
         {
-            if (last != 0)
-            {
-                i = get_pos(plaintext[j]);
-                ciphertext[j] = tabula_recta[j % 26][i];
-            }
-            else
-            {
-                i = get_pos(plaintext[last]);
-                ciphertext[last] = tabula_recta[(last) % 26][i];
-            }
+
+            i = get_pos(plaintext[j]);
+            ciphertext[j] = tabula_recta[last % 26][i];
+            printf("\n upper 1 Char %c --> %c , i = %d j = %d last = %d\n", plaintext[j], ciphertext[last], i, j, last);
+            last++;
         }
         else if (plaintext[j] >= 'a' && plaintext[j] <= 'z')
         {
-            if (last != 0)
-            {
-                i = get_pos(toupper(plaintext[j]));
-                ciphertext[j] = tolower(tabula_recta[j % 26][i]);
-            }
-            else
-            {
-                i = get_pos(toupper(plaintext[last]));
-                ciphertext[last] = tolower(tabula_recta[(last) % 26][i]);
-            }
+
+            i = get_pos(toupper(plaintext[j]));
+            ciphertext[j] = tolower(tabula_recta[last % 26][i]);
+            printf("\nlower 2 Char %c --> %c , i = %d j= %d last=%d\n", plaintext[j], ciphertext[j], i, j, last);
+            last++;
         }
         else
         {
-            last = j;
+
             ciphertext[j] = plaintext[j];
+            printf("\n other  Char %c --> %c , i = %d j= %d last=%d\n", plaintext[j], ciphertext[j], i, j, last);
         }
         j++;
     }
@@ -225,7 +214,37 @@ char *trithemius_decr(const char *ciphertext)
         return NULL;
     }
     int i, j = 0;
+    int last = 0;
+    while (ciphertext[j] != '\0')
+    {
+        if ((ciphertext[j] >= 'A' && ciphertext[j] <= 'Z') || (ciphertext[j] >= 'a' && ciphertext[j] <= 'z'))
+        {
+            i=0;
+            while (tabula_recta[last % 26][i] != '\0')
+            {
+                if (tabula_recta[last % 26][i] == ciphertext[j])
+                {
+                    break;
+                }
+                i++;
+            }
 
+            i -= last % 26;
+            if(i<0)
+                i = i + 26;
+            printf("\n\n DEBUG:letter j=%d SHIFT IS %d  column is %d  new column is  %d\n\n", j, last, i + last, i);
+            plaintext[j] = (ciphertext[j] >= 'A' && ciphertext[j] <= 'Z') ? tabula_recta[last % 26][i] : tolower(tabula_recta[last % 26][i]);
+            last++;
+            i = 0;
+        }
+        else
+        {
+            plaintext[j] = ciphertext[j];
+        }
+        j++;
+    }
+    plaintext[j] = '\0';
+    return plaintext;
 }
 
 char *rail_fence_encr(const char *plaintext, int key)
