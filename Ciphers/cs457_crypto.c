@@ -387,6 +387,166 @@ char *omit_punctuation(char *text)
     final[j] = '\0';
 }
 
-char *substitution_decr(const char *ciphertext){
-    
+char **match_words(const char *partial_word, int length)
+{
+    FILE *fp;
+    char *line = NULL;
+    size_t len = 0;
+    ssize_t read;
+    char **matching_words = malloc(100000 * sizeof(char *));
+    int matching_words_count = 0;
+
+    fp = fopen("words.txt", "r");
+    if (fp == NULL)
+        exit(EXIT_FAILURE);
+
+    printf("DEBUG: partial word is %s\n", partial_word);
+    while ((read = getline(&line, &len, fp)) != -1)
+    {
+        if (strlen(line) - 1 == length)
+        {
+            if (strncmp(line, partial_word, strlen(partial_word)) == 0)
+            {
+                matching_words[matching_words_count] = strdup(line);
+                matching_words_count++;
+            }
+        }
+    }
+
+    fclose(fp);
+    if (line)
+        free(line);
+
+    matching_words[matching_words_count] = NULL;
+    return matching_words;
 }
+
+
+    int* calculateLetterFrequency() {
+        int* frequency = malloc(26 * sizeof(int));
+        for (int i = 0; i < 26; i++) {
+            frequency[i] = 0;
+        }
+
+        FILE* fp = fopen("words.txt", "r");
+        if (fp == NULL) {
+            printf("Failed to open the file.\n");
+            return NULL;
+        }
+
+        char word[100];
+
+        while (fgets(word, sizeof(word), fp) != NULL) {
+            char firstLetter = tolower(word[0]);
+
+            if (isalpha(firstLetter)) {
+                frequency[firstLetter - 'a']++;
+            }
+        }
+
+        fclose(fp);
+
+        return frequency;
+    }
+
+
+
+char *substitution_decr(const char *ciphertext)
+{
+    int i = 0;
+    int len = strlen(ciphertext);
+    char *new_ciphertext = malloc(len + 1);
+    char *plaintext = malloc(len + 1);
+
+    if (!new_ciphertext || !ciphertext || !plaintext)
+    {
+        return NULL;
+    }
+    while (ciphertext[i] != '\0')
+    {
+        if (ciphertext[i] == ' ')
+        {
+            plaintext[i] = ciphertext[i];
+        }
+        else
+        {
+            plaintext[i] = '*';
+        }
+        i++;
+    }
+    plaintext[i] = '\0';
+
+    i = 0;
+    int done = 0;
+    printf("%s\n", plaintext);
+    while (done == 0)
+    {
+        
+        printf("\n Next mapping: ");
+        char mapping[7];
+        if (scanf(" %6[^->] -> %c", mapping, &mapping[5]) != 2)
+        {
+            printf("\nInvalid input. Please provide the input exactly like:x -> y \n Exiting program...\n");
+            exit(1);
+        }
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF)
+            ;
+
+        char x = mapping[0];
+        char y = mapping[5];
+        printf("DEBUG: x is %c and y is %c\n", x, y);
+        int i = 0;
+        while (plaintext[i] != '\0')
+        {
+            if (ciphertext[i] == y)
+            {
+                plaintext[i] = x;
+            }
+            i++;
+        }
+        printf("DEBUG: intermediate plaintext is %s\n", plaintext);
+
+        char *partial_word = malloc(100);
+        printf("\n Enter partially decripted word: ");
+        scanf("%s", partial_word);
+        int j = 0;
+        int partial_word_length = strlen(partial_word);
+
+        while (partial_word[j] != '\0')
+        {
+            if (partial_word[j] == '*')
+            {
+                partial_word[j] = '\0';
+                break;
+            }
+            j++;
+        }
+        
+
+        // printf("\n\nDEBUG: partially decripted word after conversion is : \n %s with length %d \n ", partial_word, partial_word_length);
+        char **matched_words = match_words(partial_word, partial_word_length);
+        j = 0;
+        while (matched_words[j] != NULL)
+        {
+            printf(" %s , ", matched_words[j]);
+            j++;
+        }
+
+        i = 0;
+        int k = 0;
+        while (plaintext[i] != '\0')
+        {
+            if (plaintext[i] == '*')
+            {
+                k++;
+            }
+            i++;
+        }
+        if (k == 0)
+        {
+            done = 1;
+        }
+    }
+
+    }
