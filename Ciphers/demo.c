@@ -30,7 +30,7 @@ int main()
     char *key = "randombyte";
 
     char *plaintext = "Iamhurtverybadlyhelp?";
-    char *temp = "WEERA";
+    char *temp = "HELLO WORLD";
     /*
     char *ciphertext = one_time_pad_encr(plaintext, 10, key);
     char *decrypted = one_time_pad_decr(ciphertext, 10, key);
@@ -61,11 +61,16 @@ int main()
     printf("Scytale Ciphertext: %s\n", scytale_ciphertext);
     char *scytale_decrypted = scytale_decr(scytale_ciphertext,5);
     printf("Scytale Decrypted: %s\n", scytale_decrypted);
-    */
+
 
     // DEBUG: intermediate plaintext is
-    //This is a text that has been encrypted using the affine algorithm and given as an assigment in the Computer Science Department of the University of Crete. 
+    //This is a text that has been encrypted using the affine algorithm and given as an assigment in the Computer Science Department of the University of Crete.
     char *plaintext2 ="Pfim im k pwbp pfkp fkm nwwx wxqjedpwt smixc pfw kzzixw krcajipfu kxt civwx km kx kmmicuwxp ix pfw Qaudspwj Mqiwxqw Twdkjpuwxp az pfw Sxivwjmipe az Qjwpw.";
 
     char *temp2 = substitution_decr(plaintext2);
+    */
+    char *rail_ciphertext = rail_fence_encr(temp, 3);
+    //char *rail_decrypted = rail_fence_decr(rail_ciphertext, 3);
+    printf("Rail Ciphertext: %s\n", rail_ciphertext);
+    //printf("Rail Decrypted: %s\n", rail_decrypted);
 }

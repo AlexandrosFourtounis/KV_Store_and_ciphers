@@ -255,22 +255,39 @@ char *rail_fence_encr(const char *plaintext, int key)
     {
         return NULL;
     }
-
-    int rail_len = 2 * key - 2;
-    int rail_num = len / rail_len + 1;
+    if(key<=0){
+        return NULL;
+    }
+    char matrix[key][len];
+    
     int rail_pos = 0;
-
+    int i = 0;
+    int j = 0;
+    int row = 0;
+    int column = 0;
+    int flag = 0;
     for (int i = 0; i < key; i++)
+        for (int j = 0; j < len; j++)
+            matrix[i][j] = '\n';
+
+    while (plaintext[i] != '\0')
     {
-        for (int j = i; j < len; j += rail_len)
-        {
-            ciphertext[rail_pos++] = plaintext[j];
-            if (i != 0 && i != key - 1 && j + rail_len - 2 * i < len)
-            {
-                ciphertext[rail_pos++] = plaintext[j + rail_len - 2 * i];
-            }
+        if(row == 0 || row==key-1){
+            flag = 1;
+        }
+        matrix[row][j] = plaintext[i];
+        j++;
+        if(flag==1){
+            row++;
+        }else{
+            row--;
         }
     }
+    for(int i = 0; i < key; i++)
+        for(int j = 0; j < len; j++)
+            if(matrix[i][j] != '\n')
+                ciphertext[j++] = matrix[i][j];
+
     ciphertext[len] = '\0';
     return ciphertext;
 }
@@ -421,35 +438,60 @@ char **match_words(const char *partial_word, int length)
     return matching_words;
 }
 
-
-    int* calculateLetterFrequency() {
-        int* frequency = malloc(26 * sizeof(int));
-        for (int i = 0; i < 26; i++) {
-            frequency[i] = 0;
-        }
-
-        FILE* fp = fopen("words.txt", "r");
-        if (fp == NULL) {
-            printf("Failed to open the file.\n");
-            return NULL;
-        }
-
-        char word[100];
-
-        while (fgets(word, sizeof(word), fp) != NULL) {
-            char firstLetter = tolower(word[0]);
-
-            if (isalpha(firstLetter)) {
-                frequency[firstLetter - 'a']++;
-            }
-        }
-
-        fclose(fp);
-
-        return frequency;
+int *dictionary_frequency()
+{
+    int *frequency = malloc(26 * sizeof(int));
+    for (int i = 0; i < 26; i++)
+    {
+        frequency[i] = 0;
     }
 
+    FILE *fp = fopen("words.txt", "r");
+    if (fp == NULL)
+    {
+        printf("Failed to open the file.\n");
+        return NULL;
+    }
+    char c;
+    while ((c = fgetc(fp)) != EOF)
+    {
+        if (isalpha(c))
+        {
+            c = toupper(c);
+            int pos = get_pos(c);
+            frequency[pos]++;
+        }
+    }
 
+    fclose(fp);
+
+    return frequency;
+}
+
+int *ciphertext_frequency(const char *ciphertext)
+{
+    int *frequency = malloc(26 * sizeof(int));
+    for (int i = 0; i < 26; i++)
+    {
+        frequency[i] = 0;
+    }
+
+    char c;
+    int i = 0;
+    while (ciphertext[i] != '\0')
+    {
+        c = ciphertext[i];
+        if (isalpha(c))
+        {
+            c = toupper(c);
+            int pos = get_pos(c);
+            frequency[pos]++;
+        }
+        i++;
+    }
+
+    return frequency;
+}
 
 char *substitution_decr(const char *ciphertext)
 {
@@ -462,6 +504,7 @@ char *substitution_decr(const char *ciphertext)
     {
         return NULL;
     }
+   
     while (ciphertext[i] != '\0')
     {
         if (ciphertext[i] == ' ')
@@ -481,7 +524,17 @@ char *substitution_decr(const char *ciphertext)
     printf("%s\n", plaintext);
     while (done == 0)
     {
-        
+
+        int *frequency = dictionary_frequency();
+        int *cipher_frequency = ciphertext_frequency(ciphertext);
+        printf("Letter | Dictionary Frequency | Ciphertext Frequency\n");
+        printf("------------------------------------------------------\n");
+        int i = 0;
+        while (i < 26)
+        {
+            printf("%6c | %20d | %20d\n", i + 'A', frequency[i], cipher_frequency[i]);
+            i++;
+        }
         printf("\n Next mapping: ");
         char mapping[7];
         if (scanf(" %6[^->] -> %c", mapping, &mapping[5]) != 2)
@@ -496,7 +549,7 @@ char *substitution_decr(const char *ciphertext)
         char x = mapping[0];
         char y = mapping[5];
         printf("DEBUG: x is %c and y is %c\n", x, y);
-        int i = 0;
+         i = 0;
         while (plaintext[i] != '\0')
         {
             if (ciphertext[i] == y)
@@ -522,7 +575,6 @@ char *substitution_decr(const char *ciphertext)
             }
             j++;
         }
-        
 
         // printf("\n\nDEBUG: partially decripted word after conversion is : \n %s with length %d \n ", partial_word, partial_word_length);
         char **matched_words = match_words(partial_word, partial_word_length);
@@ -548,5 +600,4 @@ char *substitution_decr(const char *ciphertext)
             done = 1;
         }
     }
-
-    }
+}
