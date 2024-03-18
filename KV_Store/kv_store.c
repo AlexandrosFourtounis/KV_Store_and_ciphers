@@ -16,13 +16,13 @@ int main(int argc, char *argv[])
     char password[100];
     printf("Enter password: ");
     scanf("%s", password);
-    unsigned char key[16], iv[16];
-    if (EVP_BytesToKey(EVP_aes_128_cbc(), EVP_md5(), NULL, password, strlen(password), 1, key, iv) == 0)
+    unsigned char key[EVP_MAX_KEY_LENGTH], iv[EVP_MAX_IV_LENGTH];
+    if (EVP_BytesToKey(EVP_aes_128_cbc(), EVP_md5(), NULL, (unsigned char *)password, strlen(password), 1, key, iv) == 0)
     {
         printf("Error generating key and IV\n");
         return 1;
     }
-
+    printf("key is %s\n iv is %s\n", key,iv);
     if (strcmp(operation, "add") == 0)
     {
         key1 = atoi(argv[4]);
@@ -70,6 +70,7 @@ int main(int argc, char *argv[])
         char value_str[20];
         sprintf(value_str, "%d", value);
         int value_length = strlen(value_str) + 1;
+        printf("length of value_str = %d\n", value_length);
         unsigned char *value_out = (unsigned char *)malloc(value_length + 16);
         if (EVP_EncryptInit_ex(ctx, EVP_aes_128_cbc(), NULL, key, iv) != 1)
         {
@@ -117,8 +118,9 @@ int main(int argc, char *argv[])
             char *key_str = strtok(line, ",");
             char *value_str = strtok(NULL, ",");
             int key_len, value_len, out_len, final_len;
-            unsigned char *key_out = (unsigned char *)malloc(sizeof(key_str));
-            unsigned char *value_out = (unsigned char *)malloc(sizeof(value_str));
+            //unsigned char *key_out = (unsigned char *)malloc(strlen(key_str) + 1);
+            unsigned char *value_out = (unsigned char *)malloc(strlen(value_str) + 1);
+            unsigned char key_out[EVP_MAX_BLOCK_LENGTH+1024];
             key_len = 0;
             if (!key_str || !value_str)
             {
@@ -133,22 +135,20 @@ int main(int argc, char *argv[])
                 printf("Error initializing decryption context\n");
                 return 1;
             }
-
-            EVP_CIPHER_CTX_set_padding(ctx, 0);
-
-            if (EVP_DecryptUpdate(ctx, key_out, &key_len, (unsigned char *)key_str, sizeof(key_str)) != 1)
+            if (EVP_DecryptUpdate(ctx, key_out, &key_len, (unsigned char *)key_str, strlen(key_str)) != 1)
             {
                 printf("Error decrypting key\n");
                 return 1;
             }
             out_len = key_len;
-            if (EVP_DecryptFinal_ex(ctx, key_out + key_len, &key_len) != 1)
+            if (EVP_DecryptFinal_ex(ctx, key_out + key_len, &final_len) != 1)
             {
                 printf("Error finalizing key decryption\n");
                 ERR_print_errors_fp(stderr);
                 return 1;
             }
-            out_len += key_len;
+            out_len += final_len;
+            key_out[out_len] = '\0';
             EVP_CIPHER_CTX_cleanup(ctx);
             printf("Key: %s, Value:\n", key_out);
 
