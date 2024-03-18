@@ -250,7 +250,7 @@ char *trithemius_decr(const char *ciphertext)
 char *rail_fence_encr(const char *plaintext, int key)
 {
     int len = strlen(plaintext);
-    char *ciphertext = malloc(len + 1);
+    char *ciphertext = malloc(key*(len+1));
     if (!ciphertext)
     {
         return NULL;
