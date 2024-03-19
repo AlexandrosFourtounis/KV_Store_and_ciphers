@@ -159,7 +159,78 @@ int main(int argc, char *argv[])
     }
     else if (strcmp(operation, "range-read") == 0)
     {
-        // TODO: Read file, decrypt key-value pairs, print values for keys in range
+        key1 = atoi(argv[4]);
+        int key2 = atoi(argv[5]);
+        printf("key1 = %d, key2 = %d\n", key1, key2);
+        EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
+
+        FILE *db = fopen("db.txt", "r");
+        if (!db)
+        {
+            printf("Error opening file\n");
+            return 1;
+        }
+        char line[256];
+        while (fgets(line, sizeof(line), db))
+        {
+            line[strcspn(line, "\n")] = '\0';
+            printf("DEBUG line: %s\n", line);
+            // Convert line from hexadecimal to binary
+            int line_len = strlen(line);
+            unsigned char *line_bin = (unsigned char *)malloc(line_len / 2);
+            for (int i = 0; i < line_len; i += 2)
+            {
+                sscanf(line + i, "%2hhx", &line_bin[i / 2]);
+            }
+            line_len /= 2;
+            int out_len, final_len;
+            final_len = 0;
+            unsigned char *line_out = malloc(line_len + 16);
+            printf("DEBUG line in bin: %s\n", line_bin);
+
+            if (EVP_DecryptInit_ex(ctx, EVP_aes_128_cbc(), NULL, key, iv) != 1)
+            {
+                printf("Error initializing decryption context\n");
+                return 1;
+            }
+            if (EVP_DecryptUpdate(ctx, line_out, &out_len, line_bin, line_len) != 1)
+            {
+                printf("Error decrypting line\n");
+                return 1;
+            }
+            out_len += final_len;
+            if (EVP_DecryptFinal_ex(ctx, line_out + out_len, &final_len) != 1)
+            {
+                printf("Error finalizing decryption\n");
+                ERR_print_errors_fp(stderr);
+                return 1;
+            }
+            out_len += final_len;
+            line_out[out_len] = '\0';
+            EVP_CIPHER_CTX_cleanup(ctx);
+            printf("Decrypted line: %s\n", line_out);
+
+            char *key_str = strtok((char *)line_out, ",");
+            char *value_str = strtok(NULL, ",");
+            if (!key_str || !value_str)
+            {
+                printf("Error parsing line\n");
+                return 1;
+            }
+
+            printf("Key: %s, Value: %s\n", key_str, value_str);
+
+            printf("DEBUG: key_str: %s as an int %d\n", key_str, atoi(key_str));
+            if (atoi(key_str) >= key1 && atoi(key_str) <= key2)
+            {
+                printf("SUCCESS key is in range of key1: %d and key2: %d with key %s and value %s\n", key1,key2, key_str, value_str);
+            }
+            free(line_bin);
+            free(line_out);
+        }
+        free(ctx);
+        fclose(db);
+
         printf("DEBUG: range-read was entered\n");
     }
     else
