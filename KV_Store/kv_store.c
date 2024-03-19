@@ -87,10 +87,8 @@ int main(int argc, char *argv[])
     else if (strcmp(operation, "read") == 0)
     {
         key1 = atoi(argv[4]);
-
-
         EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
-
+        /*open file for reading*/
         FILE *db = fopen("db.txt", "r");
         if (!db)
         {
@@ -98,11 +96,12 @@ int main(int argc, char *argv[])
             return 1;
         }
         char line[256];
+        /*while loop for each line read*/
         while (fgets(line, sizeof(line), db))
         {
             line[strcspn(line, "\n")] = '\0';
             printf("DEBUG line: %s\n", line);
-            // Convert line from hexadecimal to binary
+            // Convert line back to binary
             int line_len = strlen(line);
             unsigned char *line_bin = (unsigned char *)malloc(line_len / 2);
             for (int i = 0; i < line_len; i += 2)
@@ -112,9 +111,9 @@ int main(int argc, char *argv[])
             line_len /= 2;
             int out_len, final_len;
             final_len = 0;
+            /*+16 is needed for the padding*/
             unsigned char *line_out = malloc(line_len + 16);
-            printf("DEBUG line in bin: %s\n", line_bin);
-
+            /*feed the key and iv and initialize the context*/
             if (EVP_DecryptInit_ex(ctx, EVP_aes_128_cbc(), NULL, key, iv) != 1)
             {
                 printf("Error initializing decryption context\n");
@@ -129,14 +128,13 @@ int main(int argc, char *argv[])
             if (EVP_DecryptFinal_ex(ctx, line_out + out_len, &final_len) != 1)
             {
                 printf("Error finalizing decryption\n");
-                ERR_print_errors_fp(stderr);
+                ERR_print_errors_fp(stderr); //print errors to stderr
                 return 1;
             }
             out_len += final_len;
             line_out[out_len] = '\0';
             EVP_CIPHER_CTX_cleanup(ctx);
-            printf("Decrypted line: %s\n", line_out);
-
+            /*divide back to 2 strings using strtok*/
             char *key_str = strtok((char *)line_out, ",");
             char *value_str = strtok(NULL, ",");
             if (!key_str || !value_str)
@@ -144,14 +142,10 @@ int main(int argc, char *argv[])
                 printf("Error parsing line\n");
                 return 1;
             }
-
-            printf("Key: %s, Value: %s\n", key_str, value_str);
-            
-          
-            printf("DEBUG: key_str: %s as an int %d\n", key_str, atoi(key_str));
+            /*check if it matches the key the user wants*/
             if(atoi(key_str) == key1)
             {
-                printf("SUCCESS: %s\n", value_str);
+                printf("Key: %s, Value: %s\n", key_str, value_str);
                 free(line_bin);
                 free(line_out);
                 return 0;
@@ -161,8 +155,6 @@ int main(int argc, char *argv[])
         }
         free(ctx);
         fclose(db);
-
-        printf("DEBUG: read was entered\n");
     }
     else if (strcmp(operation, "range-read") == 0)
     {
