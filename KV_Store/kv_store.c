@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
         printf("Error generating key and IV\n");
         return 1;
     }
-    printf("key is %s\n iv is %s\n", key,iv);
+    printf("key is %s\n iv is %s\n", key, iv);
     if (strcmp(operation, "add") == 0)
     {
         key1 = atoi(argv[4]);
@@ -91,7 +91,10 @@ int main(int argc, char *argv[])
         value_out_len += value_len;
         EVP_CIPHER_CTX_cleanup(ctx);
 
-        fprintf(db, "%s,%s\n", key_out, value_out);
+        fwrite(key_out, 1, key_out_len, db);
+        fprintf(db, ",");
+        fwrite(value_out, 1, value_out_len, db);
+        fprintf(db, "\n");
         fclose(db);
         EVP_CIPHER_CTX_free(ctx);
         printf("DEBUG: key and value was encrypted and appended\n");
@@ -118,9 +121,9 @@ int main(int argc, char *argv[])
             char *key_str = strtok(line, ",");
             char *value_str = strtok(NULL, ",");
             int key_len, value_len, out_len, final_len;
-            //unsigned char *key_out = (unsigned char *)malloc(strlen(key_str) + 1);
+            unsigned char *key_out = malloc(EVP_MAX_BLOCK_LENGTH);
             unsigned char *value_out = (unsigned char *)malloc(strlen(value_str) + 1);
-            unsigned char key_out[EVP_MAX_BLOCK_LENGTH+1024];
+            // unsigned char key_out[EVP_MAX_BLOCK_LENGTH+1024];
             key_len = 0;
             if (!key_str || !value_str)
             {
@@ -130,11 +133,13 @@ int main(int argc, char *argv[])
 
             printf("DEBUG: key_str = %s, value_str = %s\n", key_str, value_str);
 
-            if (EVP_DecryptInit_ex(ctx, EVP_aes_256_cbc(), NULL, key, iv) != 1)
+            if (EVP_DecryptInit_ex(ctx, EVP_aes_128_cbc(), NULL, key, iv) != 1)
             {
                 printf("Error initializing decryption context\n");
                 return 1;
+
             }
+            //EVP_CIPHER_CTX_set_padding(ctx, 0);
             if (EVP_DecryptUpdate(ctx, key_out, &key_len, (unsigned char *)key_str, strlen(key_str)) != 1)
             {
                 printf("Error decrypting key\n");
@@ -154,7 +159,7 @@ int main(int argc, char *argv[])
 
             if (strcmp((char *)key_out, key_str) == 0)
             {
-                printf("SUCCESS Key: %s, Value: \n", key_str);
+                printf("SUCCESS Key: %s, Value: \n", (char *)key_str);
             }
 
             EVP_CIPHER_CTX_free(ctx);
