@@ -22,12 +22,10 @@ int main(int argc, char *argv[])
         printf("Error generating key and IV\n");
         return 1;
     }
-    printf("key is %s\n iv is %s\n", key, iv);
     if (strcmp(operation, "add") == 0)
     {
         key1 = atoi(argv[4]);
         value = atoi(argv[5]);
-        printf("key = %d, value = %d\n", key1, value);
         EVP_CIPHER_CTX *ctx = NULL;
         ctx = EVP_CIPHER_CTX_new();
         if (!ctx)
@@ -37,21 +35,27 @@ int main(int argc, char *argv[])
         }
 
         int out_len = 0;
+        /*open file with append mode*/
         FILE *db = fopen("db.txt", "a");
         if (db == NULL)
         {
             printf("Error opening file\n");
             return 1;
         }
+        /*copy the 2 values to be encrypted to a single string*/
         char kv_str[40];
         sprintf(kv_str, "%d,%d", key1, value);
+        /*initialize the encryption with the generated key and iv*/
         if (EVP_EncryptInit_ex(ctx, EVP_aes_128_cbc(), NULL, key, iv) != 1)
         {
             printf("Error initializing encryption\n");
             return 1;
         }
+        /*+1 is needed for the '\0' char*/
         int kv_length = strlen(kv_str) + 1;
+        /*+16 is needed for the padding*/
         unsigned char *kv_out = (unsigned char *)malloc(kv_length + 16);
+        /*feed the input to the cipher*/
         if (EVP_EncryptUpdate(ctx, kv_out, &out_len, (unsigned char *)kv_str, kv_length) != 1)
         {
             printf("Error encrypting key-value pair\n");
@@ -64,14 +68,17 @@ int main(int argc, char *argv[])
             return 1;
         }
         kv_out_len += out_len;
+        /*cleanup for reuse of same context -> redundant from latest commit*/
         EVP_CIPHER_CTX_cleanup(ctx);
+
+        /*convert to hexadecimal string to avoid terminating chars and store it in the db.txt file*/
         char *hex_out = (char *)malloc(kv_out_len * 2 + 1);
         for (int i = 0; i < kv_out_len; i++)
         {
             sprintf(hex_out + i * 2, "%02x", kv_out[i]);
         }
         hex_out[kv_out_len * 2] = '\0';
-
+        /*copy the hex encrypted string to the file, then close and free the memory*/
         fprintf(db, "%s\n", hex_out);
         fclose(db);
         EVP_CIPHER_CTX_free(ctx);
