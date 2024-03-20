@@ -128,7 +128,7 @@ int main(int argc, char *argv[])
             if (EVP_DecryptFinal_ex(ctx, line_out + out_len, &final_len) != 1)
             {
                 printf("Error finalizing decryption, you may have entered wrong master password\n");
-                ERR_print_errors_fp(stderr); //print errors to stderr
+                ERR_print_errors_fp(stderr); // print errors to stderr
                 return 1;
             }
             out_len += final_len;
@@ -143,7 +143,7 @@ int main(int argc, char *argv[])
                 return 1;
             }
             /*check if it matches the key the user wants*/
-            if(atoi(key_str) == key1)
+            if (atoi(key_str) == key1)
             {
                 printf("Key: %s, Value: %s\n", key_str, value_str);
                 free(line_bin);
@@ -160,6 +160,10 @@ int main(int argc, char *argv[])
     {
         key1 = atoi(argv[4]);
         int key2 = atoi(argv[5]);
+        if(key1 <=0 || key2 <=0){
+            printf("Error: key1 and key2 must be positive integers\n");
+            return 1;
+        }
         /*open file for reading*/
         EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
         FILE *db = fopen("db.txt", "r");
@@ -169,6 +173,14 @@ int main(int argc, char *argv[])
             return 1;
         }
         char line[256];
+        int **found_kv;
+        found_kv = (int **)malloc(1024 * sizeof(int *));
+        for (int i = 0; i < 1024; i++)
+        {
+            found_kv[i] = (int *)malloc(2 * sizeof(int));
+        }
+        int c = 0;
+        int n;
         /*while loop for each line read*/
         while (fgets(line, sizeof(line), db))
         {
@@ -208,7 +220,7 @@ int main(int argc, char *argv[])
             line_out[out_len] = '\0';
             /*cleanup context for future use*/
             EVP_CIPHER_CTX_cleanup(ctx);
-            printf("Decrypted line: %s\n", line_out);
+            // printf("Decrypted line: %s\n", line_out);
 
             /*divide the decrypted line back to 2 strings*/
             char *key_str = strtok((char *)line_out, ",");
@@ -218,18 +230,41 @@ int main(int argc, char *argv[])
                 printf("Error dividing line\n");
                 return 1;
             }
+          
             /*check if the key is in the range of the provided keys*/
             if (atoi(key_str) >= key1 && atoi(key_str) <= key2)
             {
-                printf("SUCCESS key is in range of key1: %d and key2: %d with key %s and value %s\n", key1,key2, key_str, value_str);
+                int key = atoi(key_str);
+                found_kv[c][0] = key;
+                key=atoi(value_str);
+                found_kv[c][1] = key;
+                c++;
             }
+         
             free(line_bin);
             free(line_out);
         }
+       
+
+
+        int **sorted_kv = sort_keys(found_kv, c);
+
+        int i = 0;
+        if (!found_kv || !sorted_kv)
+        {
+            printf("Error sorting keys\n");
+            return 1;
+        }
+        while (sorted_kv[i][0] != NULL)
+        {
+            printf("Key: %d, Value: %d\n", sorted_kv[i][0], sorted_kv[i][1]);
+            free(sorted_kv[i]);
+            i++;
+        }
+        free(sorted_kv);
+        printf("DEBUG: range-read was entered\n");
         free(ctx);
         fclose(db);
-
-        printf("DEBUG: range-read was entered\n");
     }
     else
     {
