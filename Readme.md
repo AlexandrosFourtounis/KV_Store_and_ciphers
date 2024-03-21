@@ -32,10 +32,13 @@ How to compile the project:
     make
 ```
 > After compiling the project, the following command will run and test the ciphers:
+    
     ```bash
     ./ciphers
     ```
+
 > The following command will run and test the key-value store:
+    
     -add operation:
         ```bash
         ./kv add -f [filename] [key] [value]
