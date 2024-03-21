@@ -19,12 +19,36 @@ A handful of ciphers as well as a implementation of a Key-Value Store using the 
 
 ## Dependencies
 
-The following are required in order to compile and run the project:
--
+    The following are required in order to compile and run the project:
+    - OpenSSL
+    - make
+    - gcc
 
 ## Usage
 
-Instructions for how to use your project.
+    How to compile the project:
+    ```bash
+    make clean
+    make
+    ```
+    > After compiling the project, the following command will run and test the ciphers:
+    ```bash
+    ./ciphers
+    ```
+    > The following command will run and test the key-value store:
+        -add operation:
+        ```bash
+        ./kv add -f [filename] [key] [value]
+        ```
+        -read operation:
+        ```bash
+        ./kv read -f [filename] [key]
+        ```
+        -range-read operation:
+        ```bash
+        ./kv range-read -f [filename] [key1] [key2]
+        ```
+    Please enter the commands ==exactly== as specified above to succesfully run and test each operation.
 
 ## Contributing
 
