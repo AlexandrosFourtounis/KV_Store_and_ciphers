@@ -92,10 +92,8 @@ int get_pos(char c)
 
 char get_char_from_pos(int i)
 {
-    printf("DEBUG: i is %d\n", i);
     if (i >= 0 && i < strlen(letters))
     {
-        printf("DEBUG: char %c has value %d\n", letters[i], i);
         return letters[i];
     }
     fprintf(stderr, "undefined position provided");
@@ -183,7 +181,6 @@ char *trithemius_encr(const char *plaintext)
 
             i = get_pos(plaintext[j]);
             ciphertext[j] = tabula_recta[last % 26][i];
-            printf("\n upper 1 Char %c --> %c , i = %d j = %d last = %d\n", plaintext[j], ciphertext[last], i, j, last);
             last++;
         }
         else if (plaintext[j] >= 'a' && plaintext[j] <= 'z')
@@ -191,14 +188,11 @@ char *trithemius_encr(const char *plaintext)
 
             i = get_pos(toupper(plaintext[j]));
             ciphertext[j] = tolower(tabula_recta[last % 26][i]);
-            printf("\nlower 2 Char %c --> %c , i = %d j= %d last=%d\n", plaintext[j], ciphertext[j], i, j, last);
             last++;
         }
         else
         {
-
             ciphertext[j] = plaintext[j];
-            printf("\n other  Char %c --> %c , i = %d j= %d last=%d\n", plaintext[j], ciphertext[j], i, j, last);
         }
         j++;
     }
@@ -232,7 +226,6 @@ char *trithemius_decr(const char *ciphertext)
             i -= last % 26;
             if (i < 0)
                 i = i + 26;
-            printf("\n\n DEBUG:letter j=%d SHIFT IS %d  column is %d  new column is  %d\n\n", j, last, i + last, i);
             plaintext[j] = (ciphertext[j] >= 'A' && ciphertext[j] <= 'Z') ? tabula_recta[last % 26][i] : tolower(tabula_recta[last % 26][i]);
             last++;
             i = 0;
@@ -357,14 +350,6 @@ char *scytale_decr(const char *ciphertext, int diameter)
         }
     }
 
-    i = 0;
-    while (i < diameter)
-    {
-        printf("DEBUG: scytale[%d] = %c\n", i, scytale[i][0]);
-        i++;
-    }
-
-    int z = 0;
     for (int i = 0; i < rows; i++)
     {
         for (int j = 0; j < diameter; j++)

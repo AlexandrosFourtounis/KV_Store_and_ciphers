@@ -244,9 +244,7 @@ int main(int argc, char *argv[])
             free(line_bin);
             free(line_out);
         }
-       
-
-
+ 
         int **sorted_kv = sort_keys(found_kv, c);
 
         int i = 0;

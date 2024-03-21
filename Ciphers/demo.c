@@ -1,11 +1,10 @@
 #include "cs457_crypto.h"
 #include <stdlib.h>
 #include <stdio.h>
-
 #include <fcntl.h>
 #include <unistd.h>
+#include <string.h>
 
-// Function to generate a random key
 void generate_key(char *key, int key_length)
 {
     int urandom = open("/dev/urandom", O_RDONLY);
@@ -27,50 +26,51 @@ void generate_key(char *key, int key_length)
 
 int main()
 {
-    char *key = "randombyte";
+    /*One-time-pad demo*/
+    char *one_time_pad_plaintext = "ThisIsACat";
+    char *one_time_pad_key = malloc(strlen(one_time_pad_plaintext) * sizeof(char));
+    generate_key(one_time_pad_key, strlen(one_time_pad_plaintext));
+    char *one_time_pad_ciphertext = one_time_pad_encr(one_time_pad_plaintext, strlen(one_time_pad_plaintext), one_time_pad_key);
+    char *one_time_pad_decrypted = one_time_pad_decr(one_time_pad_ciphertext, strlen(one_time_pad_plaintext), one_time_pad_key);
+    printf("\n One-time-pad demo: \n given plaintext: %s \n ciphertext: %s \n decrypted plaintext: %s \n", one_time_pad_plaintext, one_time_pad_ciphertext, one_time_pad_decrypted);
 
-    char *plaintext = "Iamhurtverybadlyhelp?";
-    char *temp = "HELLO WORLD";
-    /*
-    char *ciphertext = one_time_pad_encr(plaintext, 10, key);
-    char *decrypted = one_time_pad_decr(ciphertext, 10, key);
-    printf("Plaintext: %s\n", plaintext);
-    for (int i = 0; i < strlen(ciphertext); i++)
-    {
-        printf("Ciphertext[%d]: 0x%02x\n", i, ciphertext[i]);
-    }
-    printf("Decrypted: %s\n", decrypted);
-    */
-
-    /*    char *affine_ciphertext = affine_encr(plaintext);
+    /*affine cipher demo*/
+    char *affine_plaintext = "AFFINECIPHER";
+    char *affine_ciphertext = affine_encr(affine_plaintext);
     char *affine_decrypted = affine_decr(affine_ciphertext);
+    printf("Affine cipher demo: \n");
+    printf("Given plaintext: %s \n", affine_plaintext);
     printf("Affine Ciphertext: %s\n", affine_ciphertext);
     printf("Affine Decrypted: %s\n", affine_decrypted);
-    char *rail_ciphertext = rail_fence_encr(temp, 3);
-    char *rail_decrypted = rail_fence_decr(rail_ciphertext, 3);
-    printf("Rail Ciphertext: %s\n", rail_ciphertext);
-    printf("Rail Decrypted: %s\n", rail_decrypted);
 
-    char *trithemius_ciphertext = trithemius_encr(plaintext);
-     char *trithemius_decrypted = trithemius_decr(trithemius_ciphertext);
+    /*substitution algorithm decryptor demo*/
+    char *substitution_algo_dec_plain = "Pfim im k pwbp pfkp fkm nwwx wxqjedpwt smixc pfw kzzixw krcajipfu kxt civwx km kx kmmicuwxp ix pfw Qaudspwj Mqiwxqw Twdkjpuwxp az pfw Sxivwjmipe az Qjwpw.";
+
+    /*
+    IMPORTANT!!
+    To test the substitution algorithm decryptor uncomment the following line.
+    Due to its time consuming nature it is left commented.
+    */
+    // char *substitution_dec = substitution_decr(substitution_algo_dec_plain);
+    printf("IMPORTANT!! In order to test the substitution algorithm decryptor, uncomment the line 54.\n");
+    printf("It is left commented due to the time consuming nature of the algorithm.\n");
+
+    /*trithemius cipher demo*/
+    char *trithemius_plaintext = "HELLO";
+    char *trithemius_ciphertext = trithemius_encr(trithemius_plaintext);
+    char *trithemius_decrypted = trithemius_decr(trithemius_ciphertext);
+    printf("Trithemius cipher demo: \n");
+    printf("Given plaintext: %s \n", trithemius_plaintext);
     printf("Trithemius Ciphertext: %s\n", trithemius_ciphertext);
-
     printf("Trithemius Decrypted: %s\n", trithemius_decrypted);
 
-    char *scytale_ciphertext = scytale_encr(plaintext,5);
+    /*scytale cipher demo*/
+    char *scytale_plaintext = "I am hurt very badly help";
+    char *scytale_ciphertext = scytale_encr(scytale_plaintext, 5);
+    char *scytale_decrypted = scytale_decr(scytale_ciphertext, 5);
+    printf("Scytale cipher demo:\n");
+    printf("Given plaintext: %s\n", scytale_plaintext);
     printf("Scytale Ciphertext: %s\n", scytale_ciphertext);
-    char *scytale_decrypted = scytale_decr(scytale_ciphertext,5);
     printf("Scytale Decrypted: %s\n", scytale_decrypted);
 
-
-    // DEBUG: intermediate plaintext is
-    //This is a text that has been encrypted using the affine algorithm and given as an assigment in the Computer Science Department of the University of Crete.
-    char *plaintext2 ="Pfim im k pwbp pfkp fkm nwwx wxqjedpwt smixc pfw kzzixw krcajipfu kxt civwx km kx kmmicuwxp ix pfw Qaudspwj Mqiwxqw Twdkjpuwxp az pfw Sxivwjmipe az Qjwpw.";
-
-    char *temp2 = substitution_decr(plaintext2);
-    */
-    char *rail_ciphertext = rail_fence_encr(temp, 3);
-    //char *rail_decrypted = rail_fence_decr(rail_ciphertext, 3);
-    printf("Rail Ciphertext: %s\n", rail_ciphertext);
-    //printf("Rail Decrypted: %s\n", rail_decrypted);
 }
