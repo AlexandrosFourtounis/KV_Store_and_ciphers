@@ -19,7 +19,7 @@ A handful of ciphers as well as a implementation of a Key-Value Store using the 
 
 ## Dependencies
 
-    The following are required in order to compile and run the project:
+The following are required in order to compile and run the project:
     - OpenSSL
     - make
     - gcc
@@ -27,10 +27,10 @@ A handful of ciphers as well as a implementation of a Key-Value Store using the 
 ## Usage
 
 How to compile the project:
-    ```bash
+```bash
     make clean
     make
-    ```
+```
 > After compiling the project, the following command will run and test the ciphers:
     ```bash
     ./ciphers
