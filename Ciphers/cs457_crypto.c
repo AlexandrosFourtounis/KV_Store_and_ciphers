@@ -243,49 +243,63 @@ char *trithemius_decr(const char *ciphertext)
 char *rail_fence_encr(const char *plaintext, int key)
 {
     int len = strlen(plaintext);
-    char *ciphertext = malloc(key*(len+1));
-    if (!ciphertext)
-    {
+    if (len == 0 || key <= 0)
         return NULL;
-    }
-    if(key<=0){
-        return NULL;
-    }
-    char matrix[key][len];
-    
-    int rail_pos = 0;
-    int i = 0;
-    int j = 0;
-    int row = 0;
-    int column = 0;
-    int flag = 0;
-    for (int i = 0; i < key; i++)
-        for (int j = 0; j < len; j++)
-            matrix[i][j] = '\n';
 
-    while (plaintext[i] != '\0')
+    char *ciphertext = malloc((len + 1) * sizeof(char));
+    if (!ciphertext)
+        return NULL;
+
+    char matrix[key][len];
+    memset(matrix, 0, sizeof(matrix));
+
+    int up = 0;
+    int row = 0;
+    int j = 0;
+
+    int i = 0;
+    while (i < len)
     {
-        if(row == 0 || row==key-1){
-            flag = 1;
-        }
         matrix[row][j] = plaintext[i];
         j++;
-        if(flag==1){
-            row++;
-        }else{
-            row--;
-        }
-    }
-    for(int i = 0; i < key; i++)
-        for(int j = 0; j < len; j++)
-            if(matrix[i][j] != '\n')
-                ciphertext[j++] = matrix[i][j];
 
-    ciphertext[len] = '\0';
+        switch (up)
+        {
+        case 0:
+            row++;
+            up = (row == key) ? 1 : up;
+            row = (row == key) ? row - 2 : row;
+            break;
+
+        case 1:
+            row--;
+            up = (row == -1) ? 0 : up;
+            row = (row == -1) ? row + 2 : row;
+            break;
+        }
+        i++;
+    }
+    int k = 0;
+    i = 0;
+    while (i < key)
+    {
+        int j = 0;
+        while (j < len)
+        {
+            if (matrix[i][j] != 0)
+            {
+                ciphertext[k] = matrix[i][j];
+                k++;
+            }
+            j++;
+        }
+        i++;
+    }
+    ciphertext[k] = '\0';
     return ciphertext;
 }
 
-char *rail_fence_decr(const char *ciphertext)
+char *rail_fence_decr(const char *ciphertext, int key)
 {
 }
 
@@ -335,31 +349,36 @@ char *scytale_decr(const char *ciphertext, int diameter)
     int i = 0;
     int j = 0;
     int k = 0;
-    printf("DEBUG: len is %d\n", len);
-    int rows = (len + diameter - 1) / diameter;
-    char scytale[rows][diameter];
-
-    for (int i = 0; i < diameter; i++)
+    char scytale[(((len + -1) / diameter) + 1)][diameter];
+    while (i < diameter)
     {
-        for (int j = 0; j < rows; j++)
+        int j = 0;
+        while (j < (((len + -1) / diameter) + 1))
         {
-            if (i * rows + j < len)
+            if (i * (((len + -1) / diameter) + 1) + j < len)
             {
-                scytale[j][i] = ciphertext[i * rows + j];
+                scytale[j][i] = ciphertext[i * (((len + -1) / diameter) + 1) + j];
             }
+            j++;
         }
+        i++;
     }
-
-    for (int i = 0; i < rows; i++)
+    i = 0;
+    j = 0;
+    do
     {
-        for (int j = 0; j < diameter; j++)
+        j = 0;
+        do
         {
             if (i * diameter + j < len)
             {
                 plaintext[k++] = scytale[i][j];
             }
-        }
-    }
+            j++;
+        } while (j < diameter);
+        i++;
+    } while (i < (((len + -1) / diameter) + 1));
+
     plaintext[len] = '\0';
     return plaintext;
 }
@@ -489,7 +508,7 @@ char *substitution_decr(const char *ciphertext)
     {
         return NULL;
     }
-   
+
     while (ciphertext[i] != '\0')
     {
         if (ciphertext[i] == ' ')
@@ -534,7 +553,7 @@ char *substitution_decr(const char *ciphertext)
         char x = mapping[0];
         char y = mapping[5];
         printf("DEBUG: x is %c and y is %c\n", x, y);
-         i = 0;
+        i = 0;
         while (plaintext[i] != '\0')
         {
             if (ciphertext[i] == y)

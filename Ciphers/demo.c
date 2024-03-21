@@ -51,7 +51,7 @@ int main()
     To test the substitution algorithm decryptor uncomment the following line.
     Due to its time consuming nature it is left commented.
     */
-    // char *substitution_dec = substitution_decr(substitution_algo_dec_plain);
+    //char *substitution_dec = substitution_decr(substitution_algo_dec_plain);
     printf("IMPORTANT!! In order to test the substitution algorithm decryptor, uncomment the line 54.\n");
     printf("It is left commented due to the time consuming nature of the algorithm.\n");
 
@@ -72,5 +72,14 @@ int main()
     printf("Given plaintext: %s\n", scytale_plaintext);
     printf("Scytale Ciphertext: %s\n", scytale_ciphertext);
     printf("Scytale Decrypted: %s\n", scytale_decrypted);
+
+    /*rail-fence cipher demo*/
+    char *rail_fence_plaintext = "WEAREDISCOVEREDRUNATONCE";
+    char *rail_fence_ciphertext = rail_fence_encr(rail_fence_plaintext, 3);
+   // char *rail_fence_decrypted = rail_fence_decr(rail_fence_ciphertext, 3);
+    printf("Rail-fence cipher demo: \n");
+    printf("Given plaintext: %s \n", rail_fence_plaintext);
+    printf("Rail-fence Ciphertext: %s\n", rail_fence_ciphertext);
+    //printf("Rail-fence Decrypted: %s\n", rail_fence_decrypted);
 
 }
