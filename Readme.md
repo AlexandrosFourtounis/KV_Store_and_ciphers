@@ -26,29 +26,29 @@ A handful of ciphers as well as a implementation of a Key-Value Store using the 
 
 ## Usage
 
-    How to compile the project:
+How to compile the project:
     ```bash
     make clean
     make
     ```
-    > After compiling the project, the following command will run and test the ciphers:
+> After compiling the project, the following command will run and test the ciphers:
     ```bash
     ./ciphers
     ```
-    > The following command will run and test the key-value store:
-        -add operation:
+> The following command will run and test the key-value store:
+    -add operation:
         ```bash
         ./kv add -f [filename] [key] [value]
         ```
-        -read operation:
+    -read operation:
         ```bash
         ./kv read -f [filename] [key]
         ```
-        -range-read operation:
+    -range-read operation:
         ```bash
         ./kv range-read -f [filename] [key1] [key2]
         ```
-    Please enter the commands ==exactly== as specified above to succesfully run and test each operation.
+Please enter the commands ==exactly== as specified above to succesfully run and test each operation.
 
 ## Contributing
 
