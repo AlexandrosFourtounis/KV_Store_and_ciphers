@@ -38,20 +38,21 @@ How to compile the project:
     ```
 
 > The following command will run and test the key-value store:
-    
-    -add operation:
-        ```bash
-        ./kv add -f [filename] [key] [value]
-        ```
-    -read operation:
-        ```bash
-        ./kv read -f [filename] [key]
-        ```
-    -range-read operation:
-        ```bash
-        ./kv range-read -f [filename] [key1] [key2]
-        ```
-Please enter the commands ==exactly== as specified above to succesfully run and test each operation.
+> 
+> -add operation:
+>     ```bash
+>     ./kv add -f [filename] [key] [value]
+>     ```
+> -read operation:
+>     ```bash
+>     ./kv read -f [filename] [key]
+>     ```
+> -range-read operation:
+>     ```bash
+>     ./kv range-read -f [filename] [key1] [key2]
+>     ```
+> 
+> Please enter the commands ==exactly== as specified above to successfully run and test each operation.
 
 ## Contributing
 
