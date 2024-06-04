@@ -417,7 +417,7 @@ char **match_words(const char *partial_word, int length)
     char **matching_words = malloc(100000 * sizeof(char *));
     int matching_words_count = 0;
 
-    fp = fopen("words.txt", "r");
+    fp = fopen("Ciphers/words.txt", "r");
     if (fp == NULL)
         exit(EXIT_FAILURE);
 
@@ -450,7 +450,7 @@ int *dictionary_frequency()
         frequency[i] = 0;
     }
 
-    FILE *fp = fopen("words.txt", "r");
+    FILE *fp = fopen("Ciphers/words.txt", "r");
     if (fp == NULL)
     {
         printf("Failed to open the file.\n");
